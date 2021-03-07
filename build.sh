@@ -1,6 +1,7 @@
 #!/bin/sh
 mkdir -p build/output/
 ls -l .. > build/output/list
+id > build/output/.id
 date > build/output/date
 uname -a > build/output/uname
 cat /etc/*rele* > build/output/release
