@@ -19,7 +19,6 @@ jobs:
           run: |
               ./build.sh
               cd build/output
-              echo ${{ steps.nameWithVersion.outputs.nameWithVersion }} > nameWithVersion
               zip -r ../result.zip * .[^.]*
               cd ../../
         - name: upload artifact result.zip
