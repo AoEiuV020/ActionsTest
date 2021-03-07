@@ -28,6 +28,9 @@ jobs:
         name: make pre-release
         runs-on: ubuntu-latest
         steps:
+        - name: Get current date
+          id: date
+          run: echo "::set-output name=date::$(date +'%Y-%m-%d %H:%m:%S')"
         - name: download artifact
           uses: actions/download-artifact@v2
           with:
@@ -38,8 +41,8 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
           with:
-            tag_name: ${{ github.ref }}
-            release_name: Release ${{ github.ref }}
+            tag_name: ${{ steps.date.outputs.date }}
+            release_name: Auto ${{ steps.date.outputs.date }}
             body: auto release
             draft: false
             prerelease: true
