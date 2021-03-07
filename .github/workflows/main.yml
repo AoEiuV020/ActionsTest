@@ -21,8 +21,8 @@ jobs:
         - name: upload artifact
           uses: actions/upload-artifact@master
           with:
-              name: result.zip
-              path: build
+              name: build
+              path: build/result.zip
     release:
         needs: [build]
         name: make pre-release
