@@ -16,6 +16,7 @@ jobs:
           run: |
               ./build.sh
               cd build/output
+              echo ${GITHUB_REPOSITORY#*/} > repository
               zip -r ../result.zip * .[^.]*
               cd ../../
         - name: upload artifact
@@ -23,6 +24,10 @@ jobs:
           with:
               name: build
               path: build/result.zip
+          uses: actions/upload-artifact@master
+          with:
+              name: second
+              path: build/output
     release:
         needs: [build]
         name: make release
@@ -35,11 +40,14 @@ jobs:
           uses: actions/download-artifact@v2
           with:
               name: build
+          with:
+              name: second
+        - run: find . > fileList.txt
         - name: create release
           id: create_release
           uses: actions/create-release@v1
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
             tag_name: ${{ steps.date.outputs.date }}
             release_name: Auto ${{ steps.date.outputs.date }}
@@ -52,10 +60,15 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
             asset_path: ./result.zip
             asset_name: result.zip
             asset_content_type: application/zip
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ./fileList.txt
+            asset_name: fileList.txt
+            asset_content_type: text/plain
         - name: public release
           uses: eregon/publish-release@v1
           env:
