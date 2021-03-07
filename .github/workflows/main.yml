@@ -8,14 +8,49 @@ on:
       - main
 jobs:
     build:
-        name: make biuld.zip
+        name: make result.zip
         runs-on: ubuntu-latest
         steps:
         - uses: actions/checkout@v2
-        - run: ./build.sh
+        - name: build
+          run: |
+              ./build.sh
+              cd build/output
+              zip -r ../result.zip * .[^.]*
+              cd ../../
         - name: upload artifact
           uses: actions/upload-artifact@master
           with:
+              name: result.zip
+              path: build
+    release:
+        needs: [build]
+        name: make pre-release
+        runs-on: ubuntu-latest
+        steps:
+        - name: download artifact
+          uses: actions/download-artifact@v2
+          with:
               name: build
-              path: build/output
+        - name: create pre-release
+          id: create_release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          with:
+            tag_name: ${{ github.ref }}
+            release_name: Release ${{ github.ref }}
+            body: auto release
+            draft: false
+            prerelease: true
+        - name: Upload Release Asset
+          id: upload-release-asset
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            with:
+                upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+                asset_path: ./build/result.zip
+                asset_name: result.zip
+                asset_content_type: application/zip
 
