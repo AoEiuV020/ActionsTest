@@ -41,13 +41,11 @@ jobs:
           uses: actions/download-artifact@v2
           with:
               name: build
-        - run: |
-              mkdir second
-              cd second
         - name: download second
           uses: actions/download-artifact@v2
           with:
               name: second
+              path: second
         - run: find . > fileList.txt
         - name: create release
           id: create_release
