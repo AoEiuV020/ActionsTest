@@ -10,6 +10,8 @@ jobs:
     build:
         name: make result.zip
         runs-on: ubuntu-latest
+        env:
+            NAME: ${GITHUB_REPOSITORY#*/}-$(date +'%Y%m%d%H%m%S')
         steps:
         - uses: actions/checkout@v2
         - name: build
@@ -17,6 +19,7 @@ jobs:
               ./build.sh
               cd build/output
               echo ${GITHUB_REPOSITORY#*/} > repository
+              echo ${NAME} > name
               zip -r ../result.zip * .[^.]*
               cd ../../
         - name: upload artifact result.zip
@@ -34,9 +37,6 @@ jobs:
         name: make release
         runs-on: ubuntu-latest
         steps:
-        - name: Get current date
-          id: date
-          run: echo "::set-output name=date::$(date +'%Y%m%d%H%m%S')"
         - name: download build
           uses: actions/download-artifact@v2
           with:
@@ -53,8 +53,8 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            tag_name: ${{ steps.date.outputs.date }}
-            release_name: Auto ${{ steps.date.outputs.date }}
+            tag_name: ${NAME}
+            release_name: Auto ${NAME}
             body: auto release
             draft: true
             prerelease: false
