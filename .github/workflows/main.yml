@@ -25,7 +25,7 @@ jobs:
               path: build/result.zip
     release:
         needs: [build]
-        name: make pre-release
+        name: make release
         runs-on: ubuntu-latest
         steps:
         - name: Get current date
@@ -35,7 +35,7 @@ jobs:
           uses: actions/download-artifact@v2
           with:
               name: build
-        - name: create pre-release
+        - name: create release
           id: create_release
           uses: actions/create-release@v1
           env:
