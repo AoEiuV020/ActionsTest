@@ -44,8 +44,8 @@ jobs:
             tag_name: ${{ steps.date.outputs.date }}
             release_name: Auto ${{ steps.date.outputs.date }}
             body: auto release
-            draft: false
-            prerelease: true
+            draft: true
+            prerelease: false
         - name: Upload Release Asset
           id: upload-release-asset
           uses: actions/upload-release-asset@v1
@@ -56,3 +56,10 @@ jobs:
             asset_path: ./result.zip
             asset_name: result.zip
             asset_content_type: application/zip
+        - name: public release
+          uses: eregon/publish-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            release_id: ${{ steps.create_release.outputs.id }}
+
