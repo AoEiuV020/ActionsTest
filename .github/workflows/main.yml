@@ -10,16 +10,16 @@ jobs:
     build:
         name: make result.zip
         runs-on: ubuntu-latest
-        env:
-            NAME: ${GITHUB_REPOSITORY#*/}-$(date +'%Y%m%d%H%m%S')
         steps:
+        - name: make releaseId
+          id: releaseId
+          run: echo "::set-output name=releaseId::${GITHUB_REPOSITORY#*/}-$(date +'%Y%m%d%H%m%S')"
         - uses: actions/checkout@v2
         - name: build
           run: |
               ./build.sh
               cd build/output
-              echo ${GITHUB_REPOSITORY#*/} > repository
-              echo ${NAME} > name
+              echo ${{ jobs.build.steps.releaseId.outputs.releaseId }} > releaseId
               zip -r ../result.zip * .[^.]*
               cd ../../
         - name: upload artifact result.zip
@@ -53,8 +53,8 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            tag_name: ${NAME}
-            release_name: Auto ${NAME}
+            tag_name: ${{ jobs.build.steps.releaseId.outputs.releaseId }}
+            release_name: Auto ${{ jobs.build.steps.releaseId.outputs.releaseId }}
             body: auto release
             draft: true
             prerelease: false
