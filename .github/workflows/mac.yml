@@ -1,0 +1,14 @@
+
+name: mac
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macOS-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup Debug Session
+      uses: csexton/debugger-action@master
