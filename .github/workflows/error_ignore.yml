@@ -22,7 +22,10 @@ jobs:
               TARGET=$INPUT_FILE
 
               API_URL="https://$GITHUB_TOKEN:@api.github.com/repos/$GITHUB_REPOSITORY"
-              RELEASE_DATA=$(curl "$API_URL/releases/latest")
+              # actions提供的token不能通过https://token:@api的方式使用，会not found,
+              # 关键是自己申请的token就可以，
+              # 这里用Authorization: token两种token都支持，
+              RELEASE_DATA=$(curl -H "Authorization: token $GITHUB_TOKEN" "$API_URL/releases/latest")
               MESSAGE=$(echo $RELEASE_DATA | jq -r ".message")
               if [[ "$MESSAGE" == "Not Found" ]]; then
                   echo "Release not found $API_URL/releases/latest"
