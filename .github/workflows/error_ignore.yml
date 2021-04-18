@@ -37,16 +37,27 @@ jobs:
             draft: true
             prerelease: false
         - name: get release
+          if: ${{ steps.create_release.outputs.id == '' }}
           id: get_release
           uses: bruceadams/get-release@v1.2.2
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: make release id
+          run: |
+              if test ! -z "${{ steps.create_release.outputs.id }}"
+              then
+                  echo release_id="${{ steps.create_release.outputs.id }}" >> $GITHUB_ENV
+                  echo release_upload_url="${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
+              else
+                  echo release_id="${{ steps.get_release.outputs.id }}" >> $GITHUB_ENV
+                  echo release_upload_url="${{ steps.get_release.outputs.upload_url }}" >> $GITHUB_ENV
+              fi
         - name: upload release
           uses: actions/upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            upload_url: ${{ steps.get_release.outputs.upload_url }}
+            upload_url: ${{ env.release_upload_url }}
             asset_path: test_error_ignore.txt
             asset_name: test_error_ignore.txt
             asset_content_type: text/plain
@@ -55,4 +66,4 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            release_id: ${{ steps.get_release.outputs.id }}
+            release_id: ${{ env.id }}
