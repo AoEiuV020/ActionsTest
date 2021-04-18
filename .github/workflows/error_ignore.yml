@@ -46,8 +46,14 @@ jobs:
         - name: job
           run: |
               echo ${{ env.datetime }} >> test_error_ignore.txt
-        - name: create release
+        - name: get release
+          id: get_release
           continue-on-error: true
+          uses: bruceadams/get-release@v1.2.2
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: create release
+          if: ${{ steps.get_release.outputs.id == '' }}
           id: create_release
           uses: actions/create-release@v1
           env:
@@ -58,15 +64,9 @@ jobs:
             body: ${{ github.event.commits[0].message }}
             draft: true
             prerelease: false
-        - name: get release
-          if: ${{ steps.create_release.outputs.id == '' }}
-          id: get_release
-          uses: bruceadams/get-release@v1.2.2
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         - name: make release id
           run: |
-              if test ! -z "${{ steps.create_release.outputs.id }}"
+              if test -z "${{ steps.get_release.outputs.id }}"
               then
                   echo release_id="${{ steps.create_release.outputs.id }}" >> $GITHUB_ENV
                   echo release_upload_url="${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
