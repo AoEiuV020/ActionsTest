@@ -77,14 +77,14 @@ jobs:
                   echo release_upload_url="${{ steps.get_release.outputs.upload_url }}" >> $GITHUB_ENV
               fi
         - name: upload release
-          uses: actions/upload-release-asset@v1
+          uses: shogo82148/actions-upload-release-asset@v1
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
             upload_url: ${{ env.release_upload_url }}
             asset_path: test_error_ignore.txt
             asset_name: test_error_ignore.txt
-            asset_content_type: text/plain
+            overwrite: true
         - name: public release
           uses: eregon/publish-release@v1
           if: ${{ steps.get_release.outputs.target_commitish != github.sha }}
