@@ -53,7 +53,7 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            commitSha: ${{ env.GITHUB_SHA }}
+            commitSha: ${{ github.sha }}
         - name: create release
           if: ${{ steps.get_release.outputs.id == '' }}
           id: create_release
