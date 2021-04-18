@@ -52,6 +52,7 @@ jobs:
           uses: cardinalby/git-get-release-action@v1.1
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
             commitSha: ${{ env.GITHUB_SHA }}
         - name: create release
           if: ${{ steps.get_release.outputs.id == '' }}
