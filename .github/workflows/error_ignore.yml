@@ -53,9 +53,9 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            commitSha: ${{ github.sha }}
+            latest: true
         - name: create release
-          if: ${{ steps.get_release.outputs.id == '' }}
+          if: ${{ steps.get_release.outputs.target_commitish != github.sha }}
           id: create_release
           uses: actions/create-release@v1
           env:
@@ -87,7 +87,7 @@ jobs:
             asset_content_type: text/plain
         - name: public release
           uses: eregon/publish-release@v1
-          if: ${{ steps.get_release.outputs.id == '' }}
+          if: ${{ steps.get_release.outputs.target_commitish != github.sha }}
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
