@@ -39,6 +39,7 @@ jobs:
               code=$(curl -L -w '%{http_code}' -o $TARGET -H 'User-Agent: request module' -H 'Accept: application/octet-stream' "$API_URL/releases/assets/$ASSET_ID")
               if test "x$code" != "x200"
               then
+                  cat "$TARGET"
                   rm -rf "$TARGET"
                   exit 3
               fi
