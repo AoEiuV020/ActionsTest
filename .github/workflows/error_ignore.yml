@@ -36,7 +36,7 @@ jobs:
                   echo "asset not found: $INPUT_FILE"
                   exit 2
               fi
-              code=$(curl -L -w '%{http_code}' -o $TARGET -H 'User-Agent: request module' -H 'Accept: application/octet-stream' "$API_URL/releases/assets/$ASSET_ID")
+              code=$(curl -L -w '%{http_code}' -o $TARGET -H "Authorization: token $GITHUB_TOKEN" -H 'User-Agent: request module' -H 'Accept: application/octet-stream' "$API_URL/releases/assets/$ASSET_ID")
               if test "x$code" != "x200"
               then
                   cat "$TARGET"
