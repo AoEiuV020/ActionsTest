@@ -23,7 +23,7 @@ jobs:
               RELEASE_DATA=$(curl $API_URL/releases/latest)
               MESSAGE=$(echo $RELEASE_DATA | jq -r ".message")
               if [[ "$MESSAGE" == "Not Found" ]]; then
-                  echo "Release not found"
+                  echo "Release not found $API_URL/releases/latest"
                   exit 1
               fi
               ASSET_ID=$(echo $RELEASE_DATA | jq -r ".assets | map(select(.name == \"${INPUT_FILE}\"))[0].id")
