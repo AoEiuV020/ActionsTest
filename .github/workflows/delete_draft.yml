@@ -1,4 +1,4 @@
-name: delete draft
+name: delete_draft
 on:
   push:
     branches:
@@ -6,7 +6,6 @@ on:
     paths:
       - '.github/workflows/delete_draft.yml'
   workflow_dispatch:
-name: Delete Draft Releases
 
 jobs:
   build:
