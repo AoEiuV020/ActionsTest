@@ -1,0 +1,57 @@
+name: error_ignore
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/error_ignore.yml'
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+        - name: prepare
+          run: |
+              echo datetime="$(date +'%Y%m%d%H%m%S')" >> $GITHUB_ENV
+        - uses: dsaltares/fetch-gh-release-asset@master
+          continue-on-error: true
+          with:
+            repo: ${{ env.GITHUB_REPOSITORY }}
+            version: "latest"
+            file: "test_error_ignore.txt"
+            target: "test_error_ignore.txt"
+            token: ${{ secrets.GITHUB_TOKEN }}
+        - name: job
+          run: |
+              echo ${{ env.datetime }} >> test_error_ignore.txt
+        - name: create release
+          continue-on-error: true
+          id: create_release
+          uses: actions/create-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            tag_name: ${{ env.datetime }}
+            release_name: ${{ env.datetime }}
+            body: ${{ github.event.commits[0].message }}
+            draft: true
+            prerelease: false
+        - name: get release
+          id: get_release
+          uses: bruceadams/get-release@v1.2.2
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: upload release
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            upload_url: ${{ steps.get_release.outputs.upload_url }}
+            asset_path: test_error_ignore.txt
+            asset_name: test_error_ignore.txt
+            asset_content_type: text/plain
+        - name: public release
+          uses: eregon/publish-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            release_id: ${{ steps.get_release.outputs.id }}
