@@ -11,4 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Setup Debug Session
+      env:   
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       uses: csexton/debugger-action@master
