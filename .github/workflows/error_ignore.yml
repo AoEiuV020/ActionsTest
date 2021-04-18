@@ -15,11 +15,13 @@ jobs:
               echo datetime="$(date +'%Y%m%d%H%m%S')" >> $GITHUB_ENV
         - name: download latest release asset
           continue-on-error: true
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           run: |
               INPUT_FILE='test_error_ignore.txt'
               TARGET=$INPUT_FILE
 
-              API_URL="https://${{ secrets.GITHUB_TOKEN }}:@api.github.com/repos/$GITHUB_REPOSITORY"
+              API_URL="https://$GITHUB_TOKEN:@api.github.com/repos/$GITHUB_REPOSITORY"
               RELEASE_DATA=$(curl "$API_URL/releases/latest")
               MESSAGE=$(echo $RELEASE_DATA | jq -r ".message")
               if [[ "$MESSAGE" == "Not Found" ]]; then
