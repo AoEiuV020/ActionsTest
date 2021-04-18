@@ -18,10 +18,11 @@ jobs:
             repo: ${{ env.GITHUB_REPOSITORY }}
             version: "latest"
             file: "test_error_ignore.txt"
-            target: "test_error_ignore.txt"
+            target: "test_error_ignore.txt.0"
             token: ${{ secrets.GITHUB_TOKEN }}
         - name: job
           run: |
+              cp test_error_ignore.txt.0 test_error_ignore.txt
               echo ${{ env.datetime }} >> test_error_ignore.txt
         - name: create release
           continue-on-error: true
