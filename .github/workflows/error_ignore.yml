@@ -85,7 +85,7 @@ jobs:
             asset_content_type: text/plain
         - name: public release
           uses: eregon/publish-release@v1
-          continue-on-error: true
+          if: ${{ steps.get_release.outputs.id == '' }}
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
