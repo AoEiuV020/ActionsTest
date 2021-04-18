@@ -19,11 +19,11 @@ jobs:
               INPUT_FILE='test_error_ignore.txt'
               TARGET=$INPUT_FILE
 
-              API_URL="https://${{ secrets.GITHUB_TOKEN }}:@api.github.com/repos/${{ env.GITHUB_REPOSITORY }}"
+              API_URL="https://${{ secrets.GITHUB_TOKEN }}:@api.github.com/repos/$GITHUB_REPOSITORY"
               RELEASE_DATA=$(curl $API_URL/releases/latest)
               MESSAGE=$(echo $RELEASE_DATA | jq -r ".message")
               if [[ "$MESSAGE" == "Not Found" ]]; then
-                  echo "Release asset not found"
+                  echo "Release not found"
                   exit 1
               fi
               ASSET_ID=$(echo $RELEASE_DATA | jq -r ".assets | map(select(.name == \"${INPUT_FILE}\"))[0].id")
