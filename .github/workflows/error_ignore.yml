@@ -20,7 +20,7 @@ jobs:
               TARGET=$INPUT_FILE
 
               API_URL="https://${{ secrets.GITHUB_TOKEN }}:@api.github.com/repos/$GITHUB_REPOSITORY"
-              RELEASE_DATA=$(curl $API_URL/releases/latest)
+              RELEASE_DATA=$(curl "$API_URL/releases/latest")
               MESSAGE=$(echo $RELEASE_DATA | jq -r ".message")
               if [[ "$MESSAGE" == "Not Found" ]]; then
                   echo "Release not found $API_URL/releases/latest"
