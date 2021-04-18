@@ -68,7 +68,7 @@ jobs:
             prerelease: false
         - name: make release id
           run: |
-              if test -z "${{ steps.get_release.outputs.id }}"
+              if test "${{ steps.get_release.outputs.target_commitish }}" != "${{ github.sha }}"
               then
                   echo release_id="${{ steps.create_release.outputs.id }}" >> $GITHUB_ENV
                   echo release_upload_url="${{ steps.create_release.outputs.upload_url }}" >> $GITHUB_ENV
