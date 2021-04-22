@@ -24,6 +24,11 @@ jobs:
               . ./.custom_env
               echo BUILD_NAME_WITH_VERSION=\"$BUILD_NAME-$BUILD_VERSION\" >> .custom_env
               cat .custom_env >> $GITHUB_ENV
+        - name: upload .custom_env
+          uses: actions/upload-artifact@master
+          with:
+              name: custom_env
+              path: ./.custom_env
         - uses: actions/checkout@v2
         - name: build
           run: |
@@ -41,11 +46,6 @@ jobs:
           with:
               name: second
               path: build/output
-        - name: upload .custom_env
-          uses: actions/upload-artifact@master
-          with:
-              name: .custom_env
-              path: .custom_env
     release:
         needs: [build]
         name: make release
@@ -54,7 +54,7 @@ jobs:
         - name: download custom env
           uses: actions/download-artifact@v2
           with:
-              name: .custom_env
+              name: custom_env
         - name: apply custom env
           run: |
               cat .custom_env >> $GITHUB_ENV
