@@ -17,9 +17,13 @@ jobs:
         name: make result.zip
         runs-on: ubuntu-latest
         steps:
-        - name: make nameWithVersion
-          id: nameWithVersion
-          run: echo "::set-output name=nameWithVersion::${GITHUB_REPOSITORY#*/}-$(date +'%Y%m%d%H%m%S')"
+        - name: init custom env
+          run: |
+              echo BUILD_NAME=\"${GITHUB_REPOSITORY#*/}\" >> .custom_env
+              echo BUILD_VERSION=\"$(date +'%Y%m%d%H%m%S')\" >> .custom_env
+              . ./.custom_env
+              echo BUILD_NAME_WITH_VERSION=\"$BUILD_NAME-$BUILD_VERSION\" >> .custom_env
+              cat .custom_env >> $GITHUB_ENV
         - uses: actions/checkout@v2
         - name: build
           run: |
@@ -37,25 +41,24 @@ jobs:
           with:
               name: second
               path: build/output
-        - run: echo ${{ steps.nameWithVersion.outputs.nameWithVersion }} > nameWithVersion
-        - name: upload nameWithVersion
+        - name: upload .custom_env
           uses: actions/upload-artifact@master
           with:
-              name: nameWithVersion
-              path: nameWithVersion
+              name: .custom_env
+              path: .custom_env
     release:
         needs: [build]
         name: make release
         runs-on: ubuntu-latest
         steps:
-        - name: make nameWithVersion
+        - name: download custom env
           uses: actions/download-artifact@v2
           with:
-              name: nameWithVersion
-        - id: nameWithVersion
+              name: .custom_env
+        - name: apply custom env
           run: |
-              echo "::set-output name=nameWithVersion::$(cat nameWithVersion)"
-              rm nameWithVersion
+              cat .custom_env >> $GITHUB_ENV
+              rm .custom_env
         - name: download build
           uses: actions/download-artifact@v2
           with:
@@ -72,8 +75,8 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
-            tag_name: ${{ steps.nameWithVersion.outputs.nameWithVersion }}
-            release_name: ${{ steps.nameWithVersion.outputs.nameWithVersion }}
+            tag_name: ${{ env.BUILD_VERSION }}
+            release_name: ${{ env.BUILD_NAME_WITH_VERSION }}
             body: auto release
             draft: true
             prerelease: false
