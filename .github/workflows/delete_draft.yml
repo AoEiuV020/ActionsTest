@@ -2,11 +2,6 @@ name: delete_draft
 env:
     TZ: Asia/Shanghai
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/delete_draft.yml'
   workflow_dispatch:
 
 jobs:
