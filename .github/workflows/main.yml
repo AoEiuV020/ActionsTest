@@ -59,6 +59,9 @@ jobs:
         name: make release
         runs-on: ubuntu-latest
         steps:
+        - name: test env
+          run: |
+              echo $BUILD_NAME_WITH_VERSION
         - name: download custom env
           uses: actions/download-artifact@v2
           with:
