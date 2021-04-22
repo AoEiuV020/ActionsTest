@@ -38,6 +38,8 @@ jobs:
         - name: build
           run: |
               ./build.sh
+              cp .custom_env build/output/
+              cp $GITHUB_ENV build/output/
               cd build/output
               zip -r ../result.zip * .[^.]*
               cd ../../
