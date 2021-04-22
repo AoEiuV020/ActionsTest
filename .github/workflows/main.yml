@@ -28,7 +28,8 @@ jobs:
               echo BUILD_NAME="$BUILD_NAME" >> .custom_env
               echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
               echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
-              cat .custom_env |tee >> $GITHUB_ENV
+              cat .custom_env
+              cat .custom_env >> $GITHUB_ENV
         - name: upload .custom_env
           uses: actions/upload-artifact@master
           with:
