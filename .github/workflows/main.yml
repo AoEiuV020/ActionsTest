@@ -34,6 +34,8 @@ jobs:
           with:
               name: custom_env
               path: ./.custom_env
+        - name: clean custom env
+          run: rm .custom_env
         - uses: actions/checkout@v2
         - name: build
           run: |
