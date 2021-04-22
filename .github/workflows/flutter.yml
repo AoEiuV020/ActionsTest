@@ -1,5 +1,7 @@
 
 name: flutter
+env:
+    TZ: Asia/Shanghai
 
 on:
   workflow_dispatch:

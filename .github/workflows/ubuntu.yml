@@ -1,5 +1,7 @@
 
 name: ubuntu
+env:
+    TZ: Asia/Shanghai
 
 on:
   workflow_dispatch:

@@ -1,4 +1,6 @@
 name: error_ignore
+env:
+    TZ: Asia/Shanghai
 on:
   push:
     branches:
