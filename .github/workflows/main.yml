@@ -12,6 +12,8 @@ on:
     paths-ignore:
       - '.github/workflows/*'
       - '!.github/workflows/*main.yml'
+env:
+    TZ: Asia/Shanghai
 jobs:
     build:
         name: make result.zip
