@@ -19,10 +19,13 @@ jobs:
         steps:
         - name: init custom env
           run: |
-              echo BUILD_NAME=\"${GITHUB_REPOSITORY#*/}\" >> .custom_env
-              echo BUILD_VERSION=\"$(date +'%Y%m%d%H%m%S')\" >> .custom_env
-              . ./.custom_env
-              echo BUILD_NAME_WITH_VERSION=\"$BUILD_NAME-$BUILD_VERSION\" >> .custom_env
+              BUILD_NAME="${GITHUB_REPOSITORY#*/}"
+              BUILD_VERSION="$(date +'%Y%m%d%H%m%S')"
+              BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
+              # 等号后面的双引号不能转义，否则会出现在变量值中，这和shell不一样，
+              echo BUILD_NAME="$BUILD_NAME" >> .custom_env
+              echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
+              echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
               cat .custom_env >> $GITHUB_ENV
         - name: upload .custom_env
           uses: actions/upload-artifact@master
