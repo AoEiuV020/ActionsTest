@@ -12,7 +12,7 @@ jobs:
         steps:
         - name: prepare
           run: |
-              echo datetime="$(date +'%Y%m%d%H%m%S')" >> $GITHUB_ENV
+              echo datetime="$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
         - name: download latest release asset
           continue-on-error: true
           env:
