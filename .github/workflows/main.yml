@@ -3,6 +3,8 @@ env:
     TZ: Asia/Shanghai
 on:
   push:
+    tags:
+      - '*'
     branches:
       - main
     paths-ignore:
@@ -22,7 +24,12 @@ jobs:
         - name: init custom env
           run: |
               BUILD_NAME="${GITHUB_REPOSITORY#*/}"
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              if test -z "${{ github.event.release.tag_name }}"
+              then
+                  BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              else
+                  BUILD_VERSION=${{ github.event.release.tag_name }}
+              fi
               BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
               # 等号后面的双引号不能转义，否则会出现在变量值中，这和shell不一样，
               echo BUILD_NAME="$BUILD_NAME" >> .custom_env
