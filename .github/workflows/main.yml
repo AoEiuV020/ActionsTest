@@ -1,6 +1,7 @@
 name: CI
 env:
     TZ: Asia/Shanghai
+    CXX: ccache clang++ -Qunused-arguments
 on:
   push:
     tags:
