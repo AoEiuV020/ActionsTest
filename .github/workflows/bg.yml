@@ -15,6 +15,7 @@ jobs:
     - name: env
       run: |
         echo "START_TIME=$(date '+%s')" >> $GITHUB_ENV
+        echo mkdir -p "$PWD/run"
         mkdir -p "$PWD/run"
         echo "FLAG_STOP=$PWD/run/FLAG_STOP" >> $GITHUB_ENV
         echo "ROOT=$PWD" >> $GITHUB_ENV
