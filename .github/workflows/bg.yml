@@ -1,0 +1,26 @@
+
+name: bg
+env:
+    TZ: Asia/Shanghai
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - name: env
+      run: |
+        echo "START_TIME=$(date '+%s')" >> $GITHUB_ENV
+        mkdir -p "$PWD/run"
+        echo "FLAG_STOP=$PWD/run/FLAG_STOP" >> $GITHUB_ENV
+        echo "ROOT=$PWD" >> $GITHUB_ENV
+    - uses: actions/checkout@v2
+    - run: sleep $(expr 60 \* 5 + ${START_TIME}  - $(date "+%s")) && touch "$FLAG_STOP" && ( killall bash || true ) || ( test $? == 143 && echo sleep canceld ) &
+    - run: ps -ef |grep sleep
+    - name: Setup Debug Session
+      uses: csexton/debugger-action@master
+      
