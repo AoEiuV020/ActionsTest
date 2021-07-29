@@ -10,13 +10,13 @@ on:
       - main
     paths-ignore:
       - '.github/workflows/*'
-      - '!.github/workflows/*main.yml'
+      - '!.github/workflows/main.yml'
   pull_request:
     branches:
       - main
     paths-ignore:
       - '.github/workflows/*'
-      - '!.github/workflows/*main.yml'
+      - '!.github/workflows/main.yml'
 jobs:
     build:
         name: make result.zip
