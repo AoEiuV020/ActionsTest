@@ -15,4 +15,5 @@ jobs:
     - name: Setup Debug Session
       env:   
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
       uses: csexton/debugger-action@master
