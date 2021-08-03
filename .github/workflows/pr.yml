@@ -7,7 +7,7 @@ on:
   pull_request:
     paths-ignore:
       - '**/*'
-      - '!.github/workflows/pr.yml':
+      - '!.github/workflows/pr.yml'
 
 jobs:
   build:
