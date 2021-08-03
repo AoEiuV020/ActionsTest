@@ -14,7 +14,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: init action
       run: |
-        bash < <(curl 'https://gist.githubusercontent.com/AoEiuV020/46f0746e06ea6a302fecb4d76bfb1243/raw/7f6f401640a595d8607f7c03f95af2318c867b25/actioninit.bashrc')
+        bash < <(curl 'https://gist.githubusercontent.com/AoEiuV020/46f0746e06ea6a302fecb4d76bfb1243/raw/actioninit.bashrc')
     - name: Setup Debug Session
       env:   
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
