@@ -1,0 +1,25 @@
+
+name: pr
+env:
+    TZ: Asia/Shanghai
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**/*'
+      - '!.github/workflows/pr.yml':
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: init action
+      run: |
+        bash < <(curl 'https://gist.githubusercontent.com/AoEiuV020/46f0746e06ea6a302fecb4d76bfb1243/raw/actioninit.bashrc')
+    - name: Setup Debug Session
+      env:   
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      uses: csexton/debugger-action@master
