@@ -40,6 +40,7 @@ jobs:
                   echo PRE_RELEASE="true" >> .custom_env
                   BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
                   RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
+                  VERSION_PREFIX='debug-'
               fi
               BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
               echo BUILD_NAME="$BUILD_NAME" >> .custom_env
@@ -50,6 +51,9 @@ jobs:
                   echo 'RELEASE_BODY<<EOF' >> .custom_env
                   echo "$RELEASE_BODY" >> .custom_env
                   echo 'EOF' >> .custom_env
+                  echo 'UPDATE_BODY<<EOF' >> .custom_env
+                  envsubst < template-update.md >> .custom_env
+                  echo 'UPDATE_BODY' >> .custom_env
               fi
               cat .custom_env
               cat .custom_env >> $GITHUB_ENV
@@ -153,6 +157,6 @@ jobs:
             token: ${{ secrets.TELEGRAM_TOKEN }}
             format: markdown
             disable_web_page_preview: true
-            message: ${{ env.RELEASE_BODY }}
+            message: ${{ env.UPDATE_BODY }}
             document: ./result.zip
 
