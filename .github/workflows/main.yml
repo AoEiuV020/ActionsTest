@@ -57,6 +57,7 @@ jobs:
                   echo 'EOF' >> .custom_env
                   echo 'UPDATE_BODY<<EOF' >> .custom_env
                   envsubst < template-update.md >> .custom_env
+                  echo >> .custom_env
                   echo 'EOF' >> .custom_env
               fi
               if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
