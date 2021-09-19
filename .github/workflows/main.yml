@@ -56,6 +56,10 @@ jobs:
                   envsubst < template-update.md >> .custom_env
                   echo 'EOF' >> .custom_env
               fi
+              if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
+              then
+                  SEND_TELEGRAM="true"
+              fi
               cat .custom_env
               cat .custom_env >> $GITHUB_ENV
         - name: upload .custom_env
@@ -150,7 +154,7 @@ jobs:
           with:
             release_id: ${{ steps.create_release.outputs.id }}
         - name: Send commit to telegram
-          if: ${{ env.CREATE_RELEASE == 'true' }}
+          if: ${{ env.SEND_TELEGRAM == 'true' }}
           uses: appleboy/telegram-action@master
           with:
             to: ${{ secrets.TELEGRAM_TO }}
