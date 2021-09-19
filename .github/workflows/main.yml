@@ -52,10 +52,10 @@ jobs:
               cp $GITHUB_ENV build/output/
               cd build/output
               cat > event <<EOF
-              ${{ github.event }}
+              ${{ toJson(github.event) }}
               EOF
               cat > commits <<EOF
-              ${{ github.event.commits }}
+              ${{ toJson(github.event.commits) }}
               EOF
               zip -r ../result.zip * .[^.]*
               cd ../../
