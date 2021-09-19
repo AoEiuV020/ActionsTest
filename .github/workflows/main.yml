@@ -51,6 +51,9 @@ jobs:
               ./build.sh
               cp $GITHUB_ENV build/output/
               cd build/output
+              cat > event <<EOF
+              ${{ github.event }}
+              EOF
               cat > commits <<EOF
               ${{ github.event.commits }}
               EOF
