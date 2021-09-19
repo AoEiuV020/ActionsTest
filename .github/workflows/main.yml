@@ -29,9 +29,7 @@ jobs:
               then
                   echo CREATE_RELEASE="true" >> .custom_env
                   BUILD_VERSION=${GITHUB_REF#refs/tags/}
-                  echo 'RELEASE_BODY<<EOF' >> .custom_env
-                  echo '### ${{ github.event.head_commit.message }}' >> .custom_env
-                  echo 'EOF' >> .custom_env
+                  RELEASE_BODY='### ${{ github.event.head_commit.message }}'
               elif [[ ${GITHUB_REF} == refs/pull* ]]
               then
                   num=${GITHUB_REF#refs/pull/}
@@ -41,14 +39,18 @@ jobs:
                   echo CREATE_RELEASE="true" >> .custom_env
                   echo PRE_RELEASE="true" >> .custom_env
                   BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-                  echo 'RELEASE_BODY<<EOF' >> .custom_env
-                  echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")' >> .custom_env
-                  echo 'EOF' >> .custom_env
+                  RELEASE_BODY='${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")'
               fi
               BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
               echo BUILD_NAME="$BUILD_NAME" >> .custom_env
               echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
               echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+              if test -n "$RELEASE_BODY"
+              then
+                  echo 'RELEASE_BODY<<EOF' >> .custom_env
+                  echo "$RELEASE_BODY" >> .custom_env
+                  echo 'EOF' >> .custom_env
+              fi
               cat .custom_env
               cat .custom_env >> $GITHUB_ENV
         - name: upload .custom_env
