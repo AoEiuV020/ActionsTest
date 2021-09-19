@@ -51,6 +51,9 @@ jobs:
               ./build.sh
               cp $GITHUB_ENV build/output/
               cd build/output
+              cat > commits <<EOF
+              ${{ github.event.commits }}
+              EOF
               zip -r ../result.zip * .[^.]*
               cd ../../
         - name: upload artifact result.zip
