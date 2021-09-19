@@ -56,7 +56,7 @@ jobs:
                   envsubst < template-update.md >> .custom_env
                   echo 'EOF' >> .custom_env
               fi
-              if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
+              if [[ -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
               then
                   echo SEND_TELEGRAM="true" >> .custom_env
               fi
