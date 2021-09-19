@@ -58,7 +58,7 @@ jobs:
               fi
               if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
               then
-                  SEND_TELEGRAM="true"
+                  echo SEND_TELEGRAM="true" >> .custom_env
               fi
               cat .custom_env
               cat .custom_env >> $GITHUB_ENV
