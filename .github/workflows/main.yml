@@ -37,7 +37,7 @@ jobs:
               echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
               echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
               echo 'RELEASE_BODY<<EOF' >> .custom_env
-              echo '${{ toJson(github.event.commits) }}' |jq -r 'map("## "+.message)|join("\n\n------\n")' > r.md >> .custom_env
+              echo '${{ toJson(github.event.commits) }}' |jq -r 'map("## "+.message)|join("\n\n------\n")' >> .custom_env
               echo 'EOF' >> .custom_env              
               echo CC="ccache clang -Qunused-arguments" >> .custom_env
               cat .custom_env |tee $GITHUB_ENV
