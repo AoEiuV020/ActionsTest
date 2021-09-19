@@ -39,7 +39,7 @@ jobs:
                   echo CREATE_RELEASE="true" >> .custom_env
                   echo PRE_RELEASE="true" >> .custom_env
                   BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-                  RELEASE_BODY="$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")'"
+                  RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
               fi
               BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
               echo BUILD_NAME="$BUILD_NAME" >> .custom_env
