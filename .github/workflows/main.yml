@@ -145,4 +145,14 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           with:
             release_id: ${{ steps.create_release.outputs.id }}
+        - name: Send commit to telegram
+          if: ${{ env.CREATE_RELEASE == 'true' }}
+          uses: appleboy/telegram-action@master
+          with:
+            to: ${{ secrets.TELEGRAM_TO }}
+            token: ${{ secrets.TELEGRAM_TOKEN }}
+            format: markdown
+            disable_web_page_preview: true
+            message: ${{ env.RELEASE_BODY }}
+            document: ${{ github.workspace }}/result.zip }}
 
