@@ -65,6 +65,7 @@ jobs:
               cp $GITHUB_ENV build/output/
               cd build/output
               echo '${{ toJson(github) }}' > github
+              echo '${{ env.RELEASE_BODY }}' > body
               zip -r ../result.zip * .[^.]*
               cd ../../
         - name: upload artifact result.zip
