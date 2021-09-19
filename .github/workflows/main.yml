@@ -54,7 +54,7 @@ jobs:
                   echo 'EOF' >> .custom_env
                   echo 'UPDATE_BODY<<EOF' >> .custom_env
                   envsubst < template-update.md >> .custom_env
-                  echo 'UPDATE_BODY' >> .custom_env
+                  echo 'EOF' >> .custom_env
               fi
               cat .custom_env
               cat .custom_env >> $GITHUB_ENV
