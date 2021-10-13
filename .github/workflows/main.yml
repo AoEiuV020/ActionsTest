@@ -17,6 +17,7 @@ on:
     paths-ignore:
       - ".github/workflows/*"
       - "!.github/workflows/main.yml"
+  workflow_dispatch:
 jobs:
   build:
     name: make result.zip
