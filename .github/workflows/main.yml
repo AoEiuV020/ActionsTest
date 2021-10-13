@@ -18,6 +18,11 @@ on:
       - ".github/workflows/*"
       - "!.github/workflows/main.yml"
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'force'     
+        required: false
+        default: 'false'
 jobs:
   build:
     name: make result.zip
@@ -83,6 +88,7 @@ jobs:
           cd build/output
           echo '${{ toJson(github) }}' > github
           echo '${{ env.RELEASE_BODY }}' > body
+          echo '${{ github.event.inputs.force }}' > force
           zip -r ../result.zip * .[^.]*
           cd ../../
       - name: upload artifact result.zip
