@@ -75,12 +75,11 @@ jobs:
         with:
           name: custom_env
           path: ./.custom_env
-      - name: clean custom env
-        run: rm .custom_env
       - name: build
         run: |
           ./build.sh
           cp $GITHUB_ENV build/output/
+          cp .custom_env build/output/
           cd build/output
           echo '${{ toJson(github) }}' > github
           echo '${{ env.RELEASE_BODY }}' > body
