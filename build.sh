@@ -9,3 +9,4 @@ uname -a > build/output/uname
 cat /etc/os-release > build/output/release
 mkdir -p build/output/sub
 cp $0 build/output/sub/script
+cp index.html build/output/
