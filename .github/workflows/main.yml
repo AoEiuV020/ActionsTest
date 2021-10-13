@@ -6,8 +6,6 @@ on:
   push:
     tags:
       - "*"
-    branches:
-      - main
     paths-ignore:
       - ".github/workflows/*"
       - "!.github/workflows/main.yml"
@@ -41,7 +39,7 @@ jobs:
               num=${GITHUB_REF#refs/pull/}
               num=${num%/merge}
               BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
-          else
+          elif [[ ${GITHUB_REF} == refs/heads/dev ]]
               CREATE_RELEASE="true"
               echo PRE_RELEASE="true" >> .custom_env
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
