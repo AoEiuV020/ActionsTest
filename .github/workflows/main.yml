@@ -6,12 +6,14 @@ on:
   push:
     tags:
       - "*"
+    branches:
+      - "*"
     paths-ignore:
       - ".github/workflows/*"
       - "!.github/workflows/main.yml"
   pull_request:
     branches:
-      - main
+      - "*"
     paths-ignore:
       - ".github/workflows/*"
       - "!.github/workflows/main.yml"
