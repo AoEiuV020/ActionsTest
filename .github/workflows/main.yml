@@ -39,6 +39,7 @@ jobs:
               num=${num%/merge}
               BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
           elif [[ ${GITHUB_REF} == refs/heads/dev ]]
+          then
               CREATE_RELEASE="true"
               echo PRE_RELEASE="true" >> .custom_env
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
