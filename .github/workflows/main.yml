@@ -18,11 +18,21 @@ on:
       - ".github/workflows/*"
       - "!.github/workflows/main.yml"
   workflow_dispatch:
+    inputs:
+      force:
+        description: 'force?'     
+        required: false
+        default: 'false'
 jobs:
   build:
     name: make result.zip
     runs-on: ubuntu-latest
+    env:
+      FORCE: false
     steps:
+      - name: prepare inputs
+        if: github.event.inputs.force != ''
+        run: echo "FORCE=${{ github.event.inputs.force }}" >> $GITHUB_ENV
       - uses: actions/checkout@v2
       - name: init custom env
         run: |
@@ -40,6 +50,10 @@ jobs:
               num=${GITHUB_REF#refs/pull/}
               num=${num%/merge}
               BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
+          elif ${{ github.event.commits == null }}
+          then
+              CREATE_RELEASE="false"
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
           elif [[ ${GITHUB_REF} == refs/heads/dev ]]
           then
               CREATE_RELEASE="true"
@@ -83,6 +97,7 @@ jobs:
           cd build/output
           echo '${{ toJson(github) }}' > github
           echo '${{ env.RELEASE_BODY }}' > body
+          echo '${{ env.FORCE }}' > force
           zip -r ../result.zip * .[^.]*
           cd ../../
       - name: upload artifact result.zip
