@@ -1,2 +1,3 @@
 # ActionsTest
-test github actions,
+test github actions,  
+[更新日志](./ChangeLog.txt)
