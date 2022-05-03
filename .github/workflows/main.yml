@@ -107,7 +107,7 @@ jobs:
         with:
           type: 'zip'
           directory: build/output
-          filename: ${{ env.GITHUB_WORKSPACE }}/build/result.zip
+          filename: ${{ github.workspace }}/build/result.zip
           exclusions: '.*'
       - name: upload artifact result.zip
         uses: actions/upload-artifact@master
