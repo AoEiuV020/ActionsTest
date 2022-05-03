@@ -1,0 +1,152 @@
+name: matrix
+env:
+    TZ: Asia/Shanghai
+on:
+  push:
+    paths:
+      - '.github/workflows/matrix.yml'
+  workflow_dispatch:
+jobs:
+  build_env:
+    name: build env
+    runs-on: ubuntu-latest
+    steps:
+    - name: init custom env
+      run: |
+          BUILD_NAME="${GITHUB_REPOSITORY#*/}"
+          if [[ ${GITHUB_REF} == refs/tags* ]]
+          then
+              echo CREATE_RELEASE="true" >> .custom_env
+              BUILD_VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ ${GITHUB_REF} == refs/pull* ]]
+          then
+              num=${GITHUB_REF#refs/pull/}
+              num=${num%/merge}
+              BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
+          else
+              echo CREATE_RELEASE="true" >> .custom_env
+              echo PRE_RELEASE="true" >> .custom_env
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+          fi
+          BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
+          echo BUILD_NAME="$BUILD_NAME" >> .custom_env
+          echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
+          echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+          if test -n "${{ secrets.KEY_PROPERTIES }}"
+          then
+              echo "${{ secrets.KEY_PROPERTIES }}" > signing.properties
+              if test -n "${{ secrets.SIGNING_KEY }}"
+              then
+                  echo ANDROID_SIGN="true" >> .custom_env
+              fi
+              cat signing.properties >> .custom_env
+          fi
+          cat .custom_env
+          cat .custom_env >> $GITHUB_ENV
+    - name: upload .custom_env
+      uses: actions/upload-artifact@master
+      with:
+          name: custom_env
+          path: ./.custom_env
+    - name: clean custom env
+      run: rm .custom_env
+  build_app:
+    needs: [build_env]
+    name: Build Flutter (${{ matrix.config }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        name: [android, web, linux, ios, macos]
+        include:
+        - name: android
+          config: apk
+          os: ubuntu-latest
+          FILE_TYPE: apk
+          BUILD_ARGS: "--target-platform android-arm64"
+          RELEASE_PATH: '*.apk'
+          RELEASE_DIRECTORY: build/app/outputs/apk/release
+        - name: web
+          config: web
+          os: ubuntu-latest
+          FILE_TYPE: zip
+          RELEASE_DIRECTORY: build/web
+        - name: linux
+          config: linux
+          os: ubuntu-latest
+          FILE_TYPE: tar
+          ENABLE_CONFIG: linux-desktop
+          RELEASE_DIRECTORY: build/linux/x64/release/bundle
+        - name: ios
+          config: ios
+          os: macos-latest
+          FILE_TYPE: ipa
+          BUILD_ARGS: "--no-codesign"
+          RELEASE_PATH: Payload
+          RELEASE_DIRECTORY: build/ios/iphoneos
+        - name: macos
+          config: macos
+          os: macos-latest
+          FILE_TYPE: zip
+          ENABLE_CONFIG: macos-desktop
+          RELEASE_DIRECTORY: build/macos/Build/Products/Release
+      # Disable fail-fast; we want results from all OSes even if one fails.
+      fail-fast: false
+    steps:
+    - name: download custom env
+      uses: actions/download-artifact@v2
+      with:
+          name: custom_env
+    - name: apply custom env
+      run: |
+          cat .custom_env >> $GITHUB_ENV
+          rm .custom_env
+    - uses: actions/checkout@v2
+      with:
+        repository: AoEiuV020/FlutterDemo
+    - uses: subosito/flutter-action@v1
+      with:
+          channel: 'stable'
+    - name: enable config (${{ matrix.config }})
+      if: "${{ matrix.config != '' }}"
+      run: flutter config --enable-${{ matrix.ENABLE_CONFIG }}
+    - run: |
+          flutter pub get
+          flutter build ${{ matrix.config }} ${{ matrix.BUILD_ARGS }}
+    - name: post
+      run: ${{ matrix.POST_COMMAND }}
+    - name: tar
+      if: "${{ matrix.FILE_TYPE == 'tar' }}"
+      uses: thedoctor0/zip-release@master
+      with:
+        type: ${{ matrix.FILE_TYPE }}
+        path: ${{ matrix.RELEASE_PATH }}
+        directory: ${{ matrix.RELEASE_DIRECTORY }}
+        filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+    - name: zip
+      if: "${{ matrix.FILE_TYPE == 'zip' || matrix.FILE_TYPE == 'ipa' }}"
+      uses: thedoctor0/zip-release@master
+      with:
+        type: zip
+        path: ${{ matrix.RELEASE_PATH }}
+        directory: ${{ matrix.RELEASE_DIRECTORY }}
+        filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+    - name: Archive Production Artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: ${{ matrix.config }}-build
+        path: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+    - uses: AoEiuV020/sign-android-release@v2
+      name: Sign release APK
+      if: ${{ matrix.FILE_TYPE == 'apk' && env.ANDROID_SIGN == 'true' }}
+      with:
+        releaseDirectory: ${{ matrix.RELEASE_DIRECTORY }}
+        signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+        alias: ${{ env.keyAlias }}
+        keyStorePassword: ${{ env.storePassword }}
+        keyPassword: ${{ env.keyPassword }}
+    - name: single file
+      if: "${{ matrix.FILE_TYPE == 'apk'"
+      uses: canastro/copy-file-action@master
+      with:
+        source: ${{ matrix.RELEASE_DIRECTORY }}/${{ matrix.RELEASE_PATH }}
+        target: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
