@@ -79,7 +79,7 @@ jobs:
     - name: apply custom env - Windows
       if: startsWith(matrix.os, 'windows')
       run: |
-          type .custom_env >> $GITHUB_ENV
+          type .custom_env >> $env:GITHUB_ENV
           del .custom_env
     - uses: actions/checkout@v2
       with:
