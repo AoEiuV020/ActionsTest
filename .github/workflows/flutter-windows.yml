@@ -26,4 +26,15 @@ jobs:
       with:
         name: fileList.txt
         path: ./fileList.txt
+    - name: zip
+      uses: thedoctor0/zip-release@master
+      with:
+        type: 'zip'
+        directory: build/windows/runner/Release
+        filename: ${{ github.workspace }}/build/result.zip
+    - name: upload artifact result.zip
+      uses: actions/upload-artifact@master
+      with:
+        name: build
+        path: build/result.zip
 
