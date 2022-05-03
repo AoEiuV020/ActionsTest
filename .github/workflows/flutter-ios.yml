@@ -1,0 +1,31 @@
+
+name: flutter-ios
+env:
+    TZ: Asia/Shanghai
+
+on:
+  push:
+    paths:
+      - '.github/workflows/flutter-ios.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        repository: AoEiuV020/FlutterDemo
+    - uses: subosito/flutter-action@v1
+      with:
+          channel: 'stable'
+    - run: |
+          flutter pub get
+          flutter build ipa --release
+    - run: find . > fileList.txt
+    - name: upload fileList.txt
+      uses: actions/upload-artifact@master
+      with:
+        name: fileList.txt
+        path: ./fileList.txt
