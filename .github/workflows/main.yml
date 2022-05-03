@@ -102,8 +102,13 @@ jobs:
           echo '${{ toJson(github) }}' > github
           echo '${{ env.RELEASE_BODY }}' > body
           echo '${{ env.FORCE }}' > force
-          zip -r ../result.zip * .[^.]*
-          cd ../../
+      - name: zip
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          path: build/output
+          filename: build/result.zip
+          exclusions: '.*'
       - name: upload artifact result.zip
         uses: actions/upload-artifact@master
         with:
