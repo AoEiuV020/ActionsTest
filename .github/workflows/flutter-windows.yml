@@ -72,10 +72,15 @@ jobs:
       with:
           name: custom_env
     - name: apply custom env
-      uses: canastro/copy-file-action@master
-      with:
-        source: .custom_env
-        target: ${{ github.env }}
+      if: startsWith(matrix.os, 'windows') != true
+      run: |
+          cat .custom_env >> $GITHUB_ENV
+          rm .custom_env
+    - name: apply custom env - Windows
+      if: startsWith(matrix.os, 'windows')
+      run: |
+          type .custom_env >> $GITHUB_ENV
+          del .custom_env
     - uses: actions/checkout@v2
       with:
         repository: AoEiuV020/FlutterDemo
