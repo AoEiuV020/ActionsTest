@@ -69,12 +69,14 @@ jobs:
           config: web
           os: ubuntu-latest
           FILE_TYPE: zip
+          RELEASE_PATH: .
           RELEASE_DIRECTORY: build/web
         - name: linux
           config: linux
           os: ubuntu-latest
           FILE_TYPE: tar
           ENABLE_CONFIG: linux-desktop
+          RELEASE_PATH: .
           RELEASE_DIRECTORY: build/linux/x64/release/bundle
           PRE_COMMAND: sudo apt-get install clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
         - name: ios
@@ -94,6 +96,7 @@ jobs:
           os: macos-latest
           FILE_TYPE: zip
           ENABLE_CONFIG: macos-desktop
+          RELEASE_PATH: .
           RELEASE_DIRECTORY: build/macos/Build/Products/Release
       # Disable fail-fast; we want results from all OSes even if one fails.
       fail-fast: false
