@@ -74,7 +74,7 @@ jobs:
         - name: linux
           config: linux
           os: ubuntu-latest
-          FILE_TYPE: tar
+          FILE_TYPE: tar.gz
           ENABLE_CONFIG: linux-desktop
           RELEASE_PATH: .
           RELEASE_DIRECTORY: build/linux/x64/release/bundle
@@ -137,8 +137,8 @@ jobs:
           flutter build ${{ matrix.config }} ${{ matrix.BUILD_ARGS }}
     - name: post
       run: ${{ matrix.POST_COMMAND }}
-    - name: tar
-      if: "${{ matrix.FILE_TYPE == 'tar' }}"
+    - name: tar.gz
+      if: "${{ matrix.FILE_TYPE == 'tar.gz' }}"
       uses: thedoctor0/zip-release@master
       with:
         type: ${{ matrix.FILE_TYPE }}
