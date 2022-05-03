@@ -4,6 +4,9 @@ env:
     TZ: Asia/Shanghai
 
 on:
+  push:
+    paths:
+      - '.github/workflows/flutter-macos.yml'
   workflow_dispatch:
 
 jobs:
