@@ -132,7 +132,7 @@ jobs:
         type: ${{ matrix.FILE_TYPE }}
         path: ${{ matrix.RELEASE_PATH }}
         directory: ${{ matrix.RELEASE_DIRECTORY }}
-        filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+        filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
     - name: zip
       if: "${{ matrix.FILE_TYPE == 'zip' || matrix.FILE_TYPE == 'ipa' }}"
       uses: thedoctor0/zip-release@master
@@ -140,12 +140,12 @@ jobs:
         type: zip
         path: ${{ matrix.RELEASE_PATH }}
         directory: ${{ matrix.RELEASE_DIRECTORY }}
-        filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+        filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
     - name: Archive Production Artifact
       uses: actions/upload-artifact@master
       with:
-        name: ${{ matrix.config }}-build
-        path: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+        name: ${{ matrix.name }}-build
+        path: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
     - uses: AoEiuV020/sign-android-release@v2
       name: Sign release APK
       if: ${{ matrix.FILE_TYPE == 'apk' && env.ANDROID_SIGN == 'true' }}
@@ -160,4 +160,4 @@ jobs:
       uses: canastro/copy-file-action@master
       with:
         source: ${{ matrix.RELEASE_DIRECTORY }}/${{ matrix.RELEASE_PATH }}
-        target: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.config }}.${{ matrix.FILE_TYPE }}
+        target: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
