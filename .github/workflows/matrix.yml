@@ -167,9 +167,6 @@ jobs:
         alias: ${{ env.keyAlias }}
         keyStorePassword: ${{ env.storePassword }}
         keyPassword: ${{ env.keyPassword }}
-    - name: single file
+    - name: copy file
       if: "${{ matrix.FILE_TYPE == 'apk' }}"
-      uses: canastro/copy-file-action@master
-      with:
-        source: ${{ matrix.RELEASE_DIRECTORY }}/${{ matrix.RELEASE_PATH }}
-        target: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
+      run: cp ${{ matrix.RELEASE_DIRECTORY }}/${{ matrix.RELEASE_PATH }} build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
