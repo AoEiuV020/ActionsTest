@@ -22,7 +22,7 @@ jobs:
           channel: 'stable'
     - run: |
           flutter pub get
-          flutter build ipa --release
+          flutter build ipa --release --no-codesign
     - run: find . > fileList.txt
     - name: upload fileList.txt
       uses: actions/upload-artifact@master
