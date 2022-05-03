@@ -153,11 +153,6 @@ jobs:
         path: ${{ matrix.RELEASE_PATH }}
         directory: ${{ matrix.RELEASE_DIRECTORY }}
         filename: ${{ github.workspace }}/build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
-    - name: Archive Production Artifact
-      uses: actions/upload-artifact@master
-      with:
-        name: ${{ matrix.name }}-build
-        path: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
     - uses: AoEiuV020/sign-android-release@v2
       name: Sign release APK
       if: ${{ matrix.FILE_TYPE == 'apk' && env.ANDROID_SIGN == 'true' }}
@@ -170,3 +165,8 @@ jobs:
     - name: copy file
       if: "${{ matrix.FILE_TYPE == 'apk' }}"
       run: cp ${{ matrix.RELEASE_DIRECTORY }}/${{ matrix.RELEASE_PATH }} build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
+    - name: Archive Production Artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: ${{ matrix.name }}-build
+        path: build/${{ env.BUILD_NAME_WITH_VERSION }}-${{ matrix.name }}.${{ matrix.FILE_TYPE }}
