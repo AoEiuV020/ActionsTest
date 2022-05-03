@@ -20,5 +20,7 @@ jobs:
           channel: 'stable'
 
     - name: Setup Debug Session
-      uses: csexton/debugger-action@master
-      
+      env:   
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      uses: AoEiuV020/debugger-action@master
