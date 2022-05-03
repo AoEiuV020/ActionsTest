@@ -38,7 +38,7 @@ jobs:
       with:
           channel: 'stable'
     - name: enable config (${{ matrix.config }})
-      if: "${{ matrix.config != '' }}"
+      if: "${{ matrix.ENABLE_CONFIG != '' }}"
       run: flutter config --enable-${{ matrix.ENABLE_CONFIG }}
     - run: |
           flutter pub get
