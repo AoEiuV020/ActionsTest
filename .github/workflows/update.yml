@@ -1,0 +1,29 @@
+
+name: update
+env:
+    TZ: Asia/Shanghai
+
+on:
+  push:
+    paths:
+      - '.github/workflows/update.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.UPDATE_TOKEN }}
+    - name: update
+      run: |
+         version="$(date +'%Y%m%d%H%M%S')"
+         echo $version > update
+         git add .
+         curl -L 'https://github.com/AoEiuV020/rc/raw/master/linux/init.sh' |bash
+         git commit -m "update $version"
+         git tag $version
+         git push --atomic origin master $version
+         
