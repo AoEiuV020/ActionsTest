@@ -7,6 +7,9 @@ on:
   push:
     paths:
       - '.github/workflows/update.yml'
+    branches:
+      - '**'
+
   workflow_dispatch:
 
 jobs:
@@ -26,6 +29,5 @@ jobs:
          curl -L 'https://github.com/AoEiuV020/rc/raw/master/linux/init.sh' |bash
          git commit -m "update $version"
          git tag $version
-         git push
-         git push --tags
+         git push --atomic origin main $version
          
