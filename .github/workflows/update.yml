@@ -26,5 +26,6 @@ jobs:
          curl -L 'https://github.com/AoEiuV020/rc/raw/master/linux/init.sh' |bash
          git commit -m "update $version"
          git tag $version
-         git push --atomic origin main $version
+         git push
+         git push --tags
          
