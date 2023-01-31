@@ -60,7 +60,7 @@ jobs:
               echo PRE_RELEASE="true" >> .custom_env
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
               RELEASE_BODY="workflow_dispatch"
-              TG_CHANGELOG=$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")
+              TG_CHANGELOG=$RELEASE_BODY
               VERSION_PREFIX='debug-'
           elif ${{ github.event.commits == null }}
           then
