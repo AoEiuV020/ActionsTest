@@ -19,6 +19,7 @@ jobs:
         token: ${{ secrets.UPDATE_TOKEN }}
     - name: update
       run: |
+         echo '${{ toJson(github) }}'
          version="$(date +'%Y%m%d%H%M%S')"
          echo $version > update
          git add .
