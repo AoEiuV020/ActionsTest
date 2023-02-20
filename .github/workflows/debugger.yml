@@ -5,13 +5,20 @@ env:
 
 on:
   workflow_dispatch:
+    inputs:
+      sys:
+        description: 'system'     
+        required: true
+        default: 'ubuntu-latest'
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.sys }}
 
     steps:
     - uses: actions/checkout@v2
     - name: Setup Debug Session
-      uses: csexton/debugger-action@master
-      
+      env:   
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      uses: AoEiuV020/debugger-action@master
