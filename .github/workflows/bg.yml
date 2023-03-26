@@ -22,5 +22,5 @@ jobs:
     - run: sleep $(expr 60 \* 5 + ${START_TIME}  - $(date "+%s")) && touch "$FLAG_STOP" && ( killall bash || true ) || ( test $? == 143 && echo sleep canceld ) &
     - run: ps -ef |grep sleep
     - name: Setup Debug Session
-      uses: csexton/debugger-action@master
+      uses: mxschmitt/action-tmate@v3
       
