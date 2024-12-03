@@ -31,79 +31,84 @@ on:
 jobs:
   build:
     name: make result.zip
-    runs-on: ubuntu-latest
+    runs-on: mvw
     env:
       FORCE: false
     steps:
       - name: prepare inputs
         if: github.event.inputs.force != ''
-        run: echo "FORCE=${{ github.event.inputs.force }}" >> $GITHUB_ENV
-      - uses: actions/checkout@v2
+        run: echo "FORCE=${{ github.event.inputs.force }}" >> $env:GITHUB_ENV
+        shell: pwsh
+      - uses: actions/checkout@v4
       - name: init custom env
+        shell: pwsh
         run: |
-          set -a
-          BUILD_NAME="${GITHUB_REPOSITORY#*/}"
-          if [[ ${GITHUB_REF} == refs/tags* ]]
-          then
-              CREATE_RELEASE="true"
-              BUILD_VERSION=${GITHUB_REF#refs/tags/}
-              RELEASE_BODY=$(./latest-changelog.sh $BUILD_VERSION)
-              if [[ -z "$RELEASE_BODY" ]]
-              then
-                  RELEASE_BODY='### ${{ github.event.head_commit.message }}'
-              fi
-              TG_CHANGELOG="$RELEASE_BODY"
-          elif [[ ${GITHUB_REF} == refs/pull* ]]
-          then
-              CREATE_RELEASE="false"
-              num=${GITHUB_REF#refs/pull/}
-              num=${num%/merge}
-              BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
-          elif [[ ${GITHUB_EVENT_NAME} == workflow_dispatch ]]
-          then
-              CREATE_RELEASE="true"
-              echo PRE_RELEASE="true" >> .custom_env
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-              RELEASE_BODY="workflow_dispatch"
-              TG_CHANGELOG=$RELEASE_BODY
-              VERSION_PREFIX='debug-'
-          elif ${{ github.event.commits == null }}
-          then
-              CREATE_RELEASE="false"
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-          elif [[ ${GITHUB_REF} == refs/heads/dev ]]
-          then
-              CREATE_RELEASE="true"
-              echo PRE_RELEASE="true" >> .custom_env
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-              RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
-              TG_CHANGELOG=$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")
-              VERSION_PREFIX='debug-'
-          else
-              CREATE_RELEASE="false"
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-          fi
-          BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
-          echo BUILD_NAME="$BUILD_NAME" >> .custom_env
-          echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
-          echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
-          echo CREATE_RELEASE="$CREATE_RELEASE" >> .custom_env
-          if test -n "$RELEASE_BODY"
-          then
-              echo 'RELEASE_BODY<<EOF' >> .custom_env
-              echo "$RELEASE_BODY" >> .custom_env
-              echo 'EOF' >> .custom_env
-              echo 'UPDATE_BODY<<EOF' >> .custom_env
-              envsubst < template-update.md >> .custom_env
-              echo >> .custom_env
-              echo 'EOF' >> .custom_env
-          fi
-          if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
-          then
-              echo SEND_TELEGRAM="true" >> .custom_env
-          fi
-          cat .custom_env
-          cat .custom_env >> $GITHUB_ENV
+          $BUILD_NAME = $env:GITHUB_REPOSITORY.Split('/')[-1]
+          
+          if ($env:GITHUB_REF -match "^refs/tags/") {
+              $CREATE_RELEASE = "true"
+              $BUILD_VERSION = $env:GITHUB_REF -replace "^refs/tags/"
+              $RELEASE_BODY = & "./latest-changelog.sh" $BUILD_VERSION
+              if ([string]::IsNullOrEmpty($RELEASE_BODY)) {
+                  $RELEASE_BODY = "### ${{ github.event.head_commit.message }}"
+              }
+              $TG_CHANGELOG = $RELEASE_BODY
+          }
+          elseif ($env:GITHUB_REF -match "^refs/pull/") {
+              $CREATE_RELEASE = "false"
+              $num = $env:GITHUB_REF -replace "^refs/pull/" -replace "/merge$"
+              $BUILD_VERSION = "pr-${num}-$(Get-Date -Format 'yyyyMMddHHmmss')"
+          }
+          elseif ($env:GITHUB_EVENT_NAME -eq "workflow_dispatch") {
+              $CREATE_RELEASE = "true"
+              "PRE_RELEASE=true" | Out-File -Append .custom_env
+              $BUILD_VERSION = Get-Date -Format 'yyyyMMddHHmmss'
+              $RELEASE_BODY = "workflow_dispatch"
+              $TG_CHANGELOG = $RELEASE_BODY
+              $VERSION_PREFIX = 'debug-'
+          }
+          elseif ("${{ github.event.commits }}" -eq "") {
+              $CREATE_RELEASE = "false"
+              $BUILD_VERSION = Get-Date -Format 'yyyyMMddHHmmss'
+          }
+          elseif ($env:GITHUB_REF -eq "refs/heads/dev") {
+              $CREATE_RELEASE = "true"
+              "PRE_RELEASE=true" | Out-File -Append .custom_env
+              $BUILD_VERSION = Get-Date -Format 'yyyyMMddHHmmss'
+              $RELEASE_BODY = '${{ toJson(github.event.commits) }}' | ConvertFrom-Json | ForEach-Object { "### " + $_.message } | Join-String -Separator "`n`n------`n"
+              $TG_CHANGELOG = $RELEASE_BODY -replace "### (.*)", '$1' | ForEach-Object -Begin {$i=1} -Process { "$i. $_"; $i++ }
+              $VERSION_PREFIX = 'debug-'
+          }
+          else {
+              $CREATE_RELEASE = "false"
+              $BUILD_VERSION = Get-Date -Format 'yyyyMMddHHmmss'
+          }
+          
+          $BUILD_NAME_WITH_VERSION = "${BUILD_NAME}-${BUILD_VERSION}"
+          
+          "BUILD_NAME=${BUILD_NAME}" | Out-File -Append .custom_env
+          "BUILD_VERSION=${BUILD_VERSION}" | Out-File -Append .custom_env
+          "BUILD_NAME_WITH_VERSION=${BUILD_NAME_WITH_VERSION}" | Out-File -Append .custom_env
+          "CREATE_RELEASE=${CREATE_RELEASE}" | Out-File -Append .custom_env
+          
+          if ($RELEASE_BODY) {
+              "RELEASE_BODY<<EOF" | Out-File -Append .custom_env
+              $RELEASE_BODY | Out-File -Append .custom_env
+              "EOF" | Out-File -Append .custom_env
+              
+              "UPDATE_BODY<<EOF" | Out-File -Append .custom_env
+              Get-Content template-update.md | ForEach-Object {
+                  $_ -replace '\$\{.*?\}', ($ExecutionContext.InvokeCommand.ExpandString($_))
+              } | Out-File -Append .custom_env
+              "EOF" | Out-File -Append .custom_env
+          }
+          
+          if ($CREATE_RELEASE -eq "true" -and "${{ secrets.TELEGRAM_TO }}" -and "${{ secrets.TELEGRAM_TOKEN }}") {
+              "SEND_TELEGRAM=true" | Out-File -Append .custom_env
+          }
+          
+          Get-Content .custom_env
+          Get-Content .custom_env | Out-File -Append $env:GITHUB_ENV
       - name: upload .custom_env
         uses: actions/upload-artifact@v4
         with:
@@ -111,14 +116,15 @@ jobs:
           name: custom_env
           path: ./.custom_env
       - name: build
+        shell: pwsh
         run: |
           ./build.sh
-          cp $GITHUB_ENV build/output/
-          cp .custom_env build/output/
-          cd build/output
-          echo '${{ toJson(github) }}' > github
-          echo '${{ env.RELEASE_BODY }}' > body
-          echo '${{ env.FORCE }}' > force
+          Copy-Item $env:GITHUB_ENV build/output/
+          Copy-Item .custom_env build/output/
+          Set-Location build/output
+          '${{ toJson(github) }}' | Out-File github
+          '${{ env.RELEASE_BODY }}' | Out-File body
+          '${{ env.FORCE }}' | Out-File force
       - name: zip
         uses: thedoctor0/zip-release@master
         with:
