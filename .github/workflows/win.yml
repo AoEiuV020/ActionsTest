@@ -3,20 +3,6 @@ env:
   TZ: Asia/Shanghai
   CXX: ccache clang++ -Qunused-arguments
 on:
-  push:
-    tags:
-      - "*"
-    branches:
-      - "*"
-    paths-ignore:
-      - ".github/workflows/*"
-      - "!.github/workflows/main.yml"
-  pull_request:
-    branches:
-      - "*"
-    paths-ignore:
-      - ".github/workflows/*"
-      - "!.github/workflows/main.yml"
   workflow_dispatch:
     inputs:
       force:
