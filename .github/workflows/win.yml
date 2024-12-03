@@ -104,7 +104,7 @@ jobs:
       - name: build
         shell: pwsh
         run: |
-          ./build.sh
+          ./build.ps1
           Copy-Item $env:GITHUB_ENV build/output/
           Copy-Item .custom_env build/output/
           Set-Location build/output
