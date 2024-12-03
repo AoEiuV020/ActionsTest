@@ -1,4 +1,4 @@
-name: CI
+name: win
 env:
   TZ: Asia/Shanghai
   CXX: ccache clang++ -Qunused-arguments
