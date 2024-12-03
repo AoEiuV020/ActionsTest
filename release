@@ -1,0 +1,185 @@
+
+WindowsBuildLabEx                                       : 20348.1.amd64fre.fe_release.210507-1500
+WindowsCurrentVersion                                   : 6.3
+WindowsEditionId                                        : ServerDatacenter
+WindowsInstallationType                                 : Server
+WindowsInstallDateFromRegistry                          : 11/26/2024 10:11:13 AM
+WindowsProductId                                        : 00454-60000-00001-AA369
+WindowsProductName                                      : Windows Server 2022 Datacenter
+WindowsRegisteredOrganization                           : 
+WindowsRegisteredOwner                                  : 
+WindowsSystemRoot                                       : C:\Windows
+WindowsVersion                                          : 2009
+WindowsUBR                                              : 2849
+BiosCharacteristics                                     : {4, 7, 9, 11…}
+BiosBIOSVersion                                         : {VRTUAL - 12001807, BIOS Date: 12/07/18 15:46:29  Ver: 09.00.08, BIOS Date: 12/07/18 15:46:29  Ver: 09.00.08}
+BiosBuildNumber                                         : 
+BiosCaption                                             : BIOS Date: 12/07/18 15:46:29  Ver: 09.00.08
+BiosCodeSet                                             : 
+BiosCurrentLanguage                                     : enUS
+BiosDescription                                         : BIOS Date: 12/07/18 15:46:29  Ver: 09.00.08
+BiosEmbeddedControllerMajorVersion                      : 
+BiosEmbeddedControllerMinorVersion                      : 
+BiosFirmwareType                                        : Bios
+BiosIdentificationCode                                  : 
+BiosInstallableLanguages                                : 1
+BiosInstallDate                                         : 
+BiosLanguageEdition                                     : 
+BiosListOfLanguages                                     : {enUS}
+BiosManufacturer                                        : American Megatrends Inc.
+BiosName                                                : BIOS Date: 12/07/18 15:46:29  Ver: 09.00.08
+BiosOtherTargetOS                                       : 
+BiosPrimaryBIOS                                         : True
+BiosReleaseDate                                         : 12/7/2018 12:00:00 AM
+BiosSerialNumber                                        : 0000-0006-2518-9169-3734-8743-30
+BiosSMBIOSBIOSVersion                                   : 090008 
+BiosSMBIOSMajorVersion                                  : 2
+BiosSMBIOSMinorVersion                                  : 3
+BiosSMBIOSPresent                                       : True
+BiosSoftwareElementState                                : Running
+BiosStatus                                              : OK
+BiosSystemBiosMajorVersion                              : 
+BiosSystemBiosMinorVersion                              : 
+BiosTargetOperatingSystem                               : 0
+BiosVersion                                             : VRTUAL - 12001807
+CsAdminPasswordStatus                                   : Unknown
+CsAutomaticManagedPagefile                              : False
+CsAutomaticResetBootOption                              : True
+CsAutomaticResetCapability                              : True
+CsBootOptionOnLimit                                     : 0
+CsBootOptionOnWatchDog                                  : 0
+CsBootROMSupported                                      : True
+CsBootStatus                                            : {0, 0, 0, 0…}
+CsBootupState                                           : Normal boot
+CsCaption                                               : fv-az1489-275
+CsChassisBootupState                                    : Safe
+CsChassisSKUNumber                                      : 
+CsCurrentTimeZone                                       : 0
+CsDaylightInEffect                                      : 
+CsDescription                                           : AT/AT COMPATIBLE
+CsDNSHostName                                           : fv-az1489-275
+CsDomain                                                : WORKGROUP
+CsDomainRole                                            : StandaloneServer
+CsEnableDaylightSavingsTime                             : True
+CsFrontPanelResetStatus                                 : Unknown
+CsHypervisorPresent                                     : True
+CsInfraredSupported                                     : False
+CsInitialLoadInfo                                       : 
+CsInstallDate                                           : 
+CsKeyboardPasswordStatus                                : Unknown
+CsLastLoadInfo                                          : 
+CsManufacturer                                          : Microsoft Corporation
+CsModel                                                 : Virtual Machine
+CsName                                                  : fv-az1489-275
+CsNetworkAdapters                                       : {Ethernet}
+CsNetworkServerModeEnabled                              : True
+CsNumberOfLogicalProcessors                             : 4
+CsNumberOfProcessors                                    : 1
+CsProcessors                                            : {AMD EPYC 7763 64-Core Processor                }
+CsOEMStringArray                                        : {[MS_VM_CERT/SHA1/9b80ca0d5dd061ec9da4e494f4c3fd1196270c22], 00000000000000000000000000000000, To be filed by MSFT}
+CsPartOfDomain                                          : False
+CsPauseAfterReset                                       : 3932100000
+CsPCSystemType                                          : Desktop
+CsPCSystemTypeEx                                        : Desktop
+CsPowerManagementCapabilities                           : 
+CsPowerManagementSupported                              : 
+CsPowerOnPasswordStatus                                 : Unknown
+CsPowerState                                            : Unknown
+CsPowerSupplyState                                      : Safe
+CsPrimaryOwnerContact                                   : 
+CsPrimaryOwnerName                                      : 
+CsResetCapability                                       : Other
+CsResetCount                                            : -1
+CsResetLimit                                            : -1
+CsRoles                                                 : {LM_Workstation, LM_Server, NT, Server_NT}
+CsStatus                                                : OK
+CsSupportContactDescription                             : 
+CsSystemFamily                                          : 
+CsSystemSKUNumber                                       : 
+CsSystemType                                            : x64-based PC
+CsThermalState                                          : Other
+CsTotalPhysicalMemory                                   : 17179398144
+CsPhysicallyInstalledMemory                             : 16777216
+CsUserName                                              : fv-az1489-275\runneradmin
+CsWakeUpType                                            : PowerSwitch
+CsWorkgroup                                             : WORKGROUP
+OsName                                                  : Microsoft Windows Server 2022 Datacenter
+OsType                                                  : WINNT
+OsOperatingSystemSKU                                    : DatacenterServerEdition
+OsVersion                                               : 10.0.20348
+OsCSDVersion                                            : 
+OsBuildNumber                                           : 20348
+OsHotFixes                                              : {KB5046264, KB5046265, KB5011048, KB5046616…}
+OsBootDevice                                            : \Device\HarddiskVolume1
+OsSystemDevice                                          : \Device\HarddiskVolume2
+OsSystemDirectory                                       : C:\Windows\system32
+OsSystemDrive                                           : C:
+OsWindowsDirectory                                      : C:\Windows
+OsCountryCode                                           : 1
+OsCurrentTimeZone                                       : 0
+OsLocaleID                                              : 0409
+OsLocale                                                : en-US
+OsLocalDateTime                                         : 12/3/2024 4:58:16 PM
+OsLastBootUpTime                                        : 12/3/2024 4:49:41 PM
+OsUptime                                                : 00:08:35.3231910
+OsBuildType                                             : Multiprocessor Free
+OsCodeSet                                               : 1252
+OsDataExecutionPreventionAvailable                      : True
+OsDataExecutionPrevention32BitApplications              : True
+OsDataExecutionPreventionDrivers                        : True
+OsDataExecutionPreventionSupportPolicy                  : OptOut
+OsDebug                                                 : False
+OsDistributed                                           : False
+OsEncryptionLevel                                       : 256
+OsForegroundApplicationBoost                            : Maximum
+OsTotalVisibleMemorySize                                : 16776756
+OsFreePhysicalMemory                                    : 14559144
+OsTotalVirtualMemorySize                                : 19791412
+OsFreeVirtualMemory                                     : 17700652
+OsInUseVirtualMemory                                    : 2090760
+OsTotalSwapSpaceSize                                    : 
+OsSizeStoredInPagingFiles                               : 3014656
+OsFreeSpaceInPagingFiles                                : 3014656
+OsPagingFiles                                           : {D:\pagefile.sys}
+OsHardwareAbstractionLayer                              : 10.0.20348.2849
+OsInstallDate                                           : 11/26/2024 10:11:13 AM
+OsManufacturer                                          : Microsoft Corporation
+OsMaxNumberOfProcesses                                  : 4294967295
+OsMaxProcessMemorySize                                  : 137438953344
+OsMuiLanguages                                          : {en-US}
+OsNumberOfLicensedUsers                                 : 0
+OsNumberOfProcesses                                     : 121
+OsNumberOfUsers                                         : 1
+OsOrganization                                          : 
+OsArchitecture                                          : 64-bit
+OsLanguage                                              : en-US
+OsProductSuites                                         : {TerminalServices, DatacenterEdition, TerminalServicesSingleSession}
+OsOtherTypeDescription                                  : 
+OsPAEEnabled                                            : 
+OsPortableOperatingSystem                               : False
+OsPrimary                                               : True
+OsProductType                                           : Server
+OsRegisteredUser                                        : 
+OsSerialNumber                                          : 00454-60000-00001-AA369
+OsServicePackMajorVersion                               : 0
+OsServicePackMinorVersion                               : 0
+OsStatus                                                : OK
+OsSuites                                                : {TerminalServices, DatacenterEdition, TerminalServicesSingleSession}
+OsServerLevel                                           : FullServer
+KeyboardLayout                                          : en-US
+TimeZone                                                : (UTC) Coordinated Universal Time
+LogonServer                                             : \\fv-az1489-275
+PowerPlatformRole                                       : Desktop
+HyperVisorPresent                                       : True
+HyperVRequirementDataExecutionPreventionAvailable       : 
+HyperVRequirementSecondLevelAddressTranslation          : 
+HyperVRequirementVirtualizationFirmwareEnabled          : 
+HyperVRequirementVMMonitorModeExtensions                : 
+DeviceGuardSmartStatus                                  : Off
+DeviceGuardRequiredSecurityProperties                   : 
+DeviceGuardAvailableSecurityProperties                  : 
+DeviceGuardSecurityServicesConfigured                   : 
+DeviceGuardSecurityServicesRunning                      : 
+DeviceGuardCodeIntegrityPolicyEnforcementStatus         : 
+DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus : 
+

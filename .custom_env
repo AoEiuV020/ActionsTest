@@ -1,0 +1,19 @@
+PRE_RELEASE=true
+BUILD_NAME=ActionsTest
+BUILD_VERSION=20241203165814
+BUILD_NAME_WITH_VERSION=ActionsTest-20241203165814
+CREATE_RELEASE=true
+RELEASE_BODY<<EOF
+workflow_dispatch
+EOF
+UPDATE_BODY<<EOF
+*ActionsTest更新，*ActionsTest更新，debug-20241203165814**ActionsTest更新，debug-20241203165814**
+[CI](https://github.com/[CI](https://github.com//actions/runs/)  [反馈](https://github.com//issues)/actions/runs/[CI](https://github.com//actions/runs/)  [反馈](https://github.com//issues))  [反馈](https://github.com/[CI](https://github.com//actions/runs/)  [反馈](https://github.com//issues)/issues)
+
+*下载地址：*
+[GITHUB](https://github.com/[GITHUB](https://github.com//releases/tag/20241203165814)/releases/tag/[GITHUB](https://github.com//releases/tag/20241203165814))
+
+*更新日志：*
+workflow_dispatch
+EOF
+SEND_TELEGRAM=true

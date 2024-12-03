@@ -1,0 +1,56 @@
+
+Name                           Value
+----                           -----
+?                              True
+^                              
+$                              
+args                           {}
+ConfirmPreference              High
+DebugPreference                SilentlyContinue
+EnabledExperimentalFeatures    {}
+Error                          {}
+ErrorActionPreference          Stop
+ErrorView                      ConciseView
+ExecutionContext               System.Management.Automation.EngineIntrinsics
+false                          False
+FormatEnumerationLimit         4
+HOME                           C:\Users\runneradmin
+Host                           System.Management.Automation.Internal.Host.InternalHost
+InformationPreference          SilentlyContinue
+input                          System.Collections.ArrayList+ArrayListEnumeratorSimple
+IsCoreCLR                      True
+IsLinux                        False
+IsMacOS                        False
+IsWindows                      True
+MaximumHistoryCount            4096
+MyInvocation                   System.Management.Automation.InvocationInfo
+NestedPromptLevel              0
+null                           
+OutputEncoding                 System.Text.UTF8Encoding+UTF8EncodingSealed
+PID                            7344
+PROFILE                        C:\Users\runneradmin\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
+ProgressPreference             Continue
+PSBoundParameters              {}
+PSCommandPath                  D:\a\ActionsTest\ActionsTest\build.ps1
+PSCulture                      en-US
+PSDefaultParameterValues       {}
+PSEdition                      Core
+PSEmailServer                  
+PSHOME                         C:\Program Files\PowerShell\7
+PSNativeCommandArgumentPassing Windows
+PSNativeCommandUseErrorAction… False
+PSScriptRoot                   D:\a\ActionsTest\ActionsTest
+PSSessionApplicationName       wsman
+PSSessionConfigurationName     http://schemas.microsoft.com/powershell/Microsoft.PowerShell
+PSSessionOption                System.Management.Automation.Remoting.PSSessionOption
+PSStyle                        System.Management.Automation.PSStyle
+PSUICulture                    en-US
+PSVersionTable                 {[PSVersion, 7.4.6], [PSEdition, Core], [GitCommitId, 7.4.6], [OS, Microsoft Windows 10.…
+PWD                            D:\a\ActionsTest\ActionsTest
+ShellId                        Microsoft.PowerShell
+StackTrace                     
+true                           True
+VerbosePreference              SilentlyContinue
+WarningPreference              Continue
+WhatIfPreference               False
+
