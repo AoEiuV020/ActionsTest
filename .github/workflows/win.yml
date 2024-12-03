@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     name: make result.zip
-    runs-on: mvw
+    runs-on: self-hosted
     env:
       FORCE: false
     steps:
