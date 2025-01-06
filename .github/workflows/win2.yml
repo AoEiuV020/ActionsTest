@@ -1,0 +1,241 @@
+name: win2
+env:
+  TZ: Asia/Shanghai
+  CXX: ccache clang++ -Qunused-arguments
+on:
+  push:
+    tags:
+      - "*"
+    branches:
+      - "*"
+    paths-ignore:
+      - ".github/workflows/*"
+      - "!.github/workflows/main.yml"
+  pull_request:
+    branches:
+      - "*"
+    paths-ignore:
+      - ".github/workflows/*"
+      - "!.github/workflows/main.yml"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'force?'     
+        required: false
+        default: 'false'
+      debug_enabled:
+        type: boolean
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        required: false
+        default: false
+jobs:
+  build:
+    name: make result.zip
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      FORCE: false
+    steps:
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            git
+            base-devel
+            mingw-w64-x86_64-toolchain
+            ccache
+            zip
+            unzip
+            mingw-w64-x86_64-jq
+      - name: prepare inputs
+        if: github.event.inputs.force != ''
+        run: echo "FORCE=${{ github.event.inputs.force }}" >> $GITHUB_ENV
+      - uses: actions/checkout@v2
+      - name: init custom env
+        run: |
+          set -a
+          BUILD_NAME="${GITHUB_REPOSITORY#*/}"
+          if [[ ${GITHUB_REF} == refs/tags* ]]
+          then
+              CREATE_RELEASE="true"
+              BUILD_VERSION=${GITHUB_REF#refs/tags/}
+              RELEASE_BODY=$(./latest-changelog.sh $BUILD_VERSION)
+              if [[ -z "$RELEASE_BODY" ]]
+              then
+                  RELEASE_BODY='### ${{ github.event.head_commit.message }}'
+              fi
+              TG_CHANGELOG="$RELEASE_BODY"
+          elif [[ ${GITHUB_REF} == refs/pull* ]]
+          then
+              CREATE_RELEASE="false"
+              num=${GITHUB_REF#refs/pull/}
+              num=${num%/merge}
+              BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
+          elif [[ ${GITHUB_EVENT_NAME} == workflow_dispatch ]]
+          then
+              CREATE_RELEASE="true"
+              echo PRE_RELEASE="true" >> .custom_env
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              RELEASE_BODY="workflow_dispatch"
+              TG_CHANGELOG=$RELEASE_BODY
+              VERSION_PREFIX='debug-'
+          elif ${{ github.event.commits == null }}
+          then
+              CREATE_RELEASE="false"
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+          elif [[ ${GITHUB_REF} == refs/heads/dev ]]
+          then
+              CREATE_RELEASE="true"
+              echo PRE_RELEASE="true" >> .custom_env
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
+              TG_CHANGELOG=$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")
+              VERSION_PREFIX='debug-'
+          else
+              CREATE_RELEASE="false"
+              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+          fi
+          BUILD_NAME_WITH_VERSION="$BUILD_NAME-$BUILD_VERSION"
+          echo BUILD_NAME="$BUILD_NAME" >> .custom_env
+          echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
+          echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
+          echo CREATE_RELEASE="$CREATE_RELEASE" >> .custom_env
+          if test -n "$RELEASE_BODY"
+          then
+              echo 'RELEASE_BODY<<EOF' >> .custom_env
+              echo "$RELEASE_BODY" >> .custom_env
+              echo 'EOF' >> .custom_env
+              echo 'UPDATE_BODY<<EOF' >> .custom_env
+              envsubst < template-update.md >> .custom_env
+              echo >> .custom_env
+              echo 'EOF' >> .custom_env
+          fi
+          if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
+          then
+              echo SEND_TELEGRAM="true" >> .custom_env
+          fi
+          cat .custom_env
+          cat .custom_env >> $GITHUB_ENV
+      - name: upload .custom_env
+        uses: actions/upload-artifact@v4
+        with:
+          include-hidden-files: true
+          name: custom_env
+          path: ./.custom_env
+      - name: build
+        run: |
+          ./build.sh
+          cp $GITHUB_ENV build/output/
+          cp .custom_env build/output/
+          cd build/output
+          echo '${{ toJson(github) }}' > github
+          echo '${{ env.RELEASE_BODY }}' > body
+          echo '${{ env.FORCE }}' > force
+      - name: zip
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          directory: build/output
+          filename: ${{ github.workspace }}/build/result.zip
+          exclusions: '.*'
+      - name: upload artifact result.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: build/result.zip
+      - name: upload artifact output folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: second
+          path: build/output
+      - name: Setup tmate session
+        env:   
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          force_orphan: true
+          publish_dir: build/output/
+  release:
+    needs: [build]
+    name: make release
+    runs-on: ubuntu-latest
+    steps:
+      - name: test env
+        run: |
+          echo $BUILD_NAME_WITH_VERSION
+      - name: download custom env
+        uses: actions/download-artifact@v4
+        with:
+          name: custom_env
+      - name: apply custom env
+        run: |
+          cat .custom_env >> $GITHUB_ENV
+          rm .custom_env
+      - name: download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+      - name: download second
+        uses: actions/download-artifact@v4
+        with:
+          name: second
+          path: second
+      - run: find . > fileList.txt
+      - name: create release
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.BUILD_VERSION }}
+          release_name: ${{ env.BUILD_VERSION }}
+          body: ${{ env.RELEASE_BODY }}
+          draft: true
+          prerelease: ${{ env.PRE_RELEASE == 'true' }}
+      - name: Upload Release Asset result.zip
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./result.zip
+          asset_name: ${{ env.BUILD_NAME_WITH_VERSION }}.zip
+          asset_content_type: application/zip
+      - name: Upload Release Asset fileList.txt
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./fileList.txt
+          asset_name: fileList.txt
+          asset_content_type: text/plain
+      - name: public release
+        if: ${{ env.CREATE_RELEASE == 'true' }}
+        uses: eregon/publish-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
+      - name: Send commit to telegram
+        if: ${{ env.SEND_TELEGRAM == 'true' }}
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          format: markdown
+          disable_web_page_preview: true
+          message: ${{ env.UPDATE_BODY }}
+          document: ./result.zip
