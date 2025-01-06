@@ -1,0 +1,20 @@
+PRE_RELEASE=true
+BUILD_NAME=ActionsTest
+BUILD_VERSION=20250106232106
+BUILD_NAME_WITH_VERSION=ActionsTest-20250106232106
+CREATE_RELEASE=true
+RELEASE_BODY<<EOF
+workflow_dispatch
+EOF
+UPDATE_BODY<<EOF
+*ActionsTest更新，debug-20250106232106*
+[CI](https://github.com/AoEiuV020/ActionsTest/actions/runs/12635150015)  [反馈](https://github.com/AoEiuV020/ActionsTest/issues)
+
+*下载地址：*
+[GITHUB](https://github.com/AoEiuV020/ActionsTest/releases/tag/20250106232106)
+
+*更新日志：*
+workflow_dispatch
+
+EOF
+SEND_TELEGRAM=true
