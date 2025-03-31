@@ -1,0 +1,24 @@
+
+name: repo-test
+env:
+    TZ: Asia/Shanghai
+
+on:
+  workflow_dispatch:
+    inputs:
+      apk-url:
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: download
+      run: curl -L ${{ github.event.inputs.apk-url }} -o download.apk
+    - name: push to fdroid repo
+      uses: AoEiuV020/f-droid-repo/actions/push-fdroid@main
+      with:
+        apk-path: download.apk
+        target-repo: AoEiuV020/f-droid-repo
+        github-token: ${{ secrets.FDROID_REPO_TOKEN }}
