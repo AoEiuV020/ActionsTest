@@ -10,13 +10,13 @@ on:
       - "*"
     paths-ignore:
       - ".github/workflows/*"
-      - "!.github/workflows/main.yml"
+      - "!.github/workflows/win2.yml"
   pull_request:
     branches:
       - "*"
     paths-ignore:
       - ".github/workflows/*"
-      - "!.github/workflows/main.yml"
+      - "!.github/workflows/win2.yml"
   workflow_dispatch:
     inputs:
       force:
