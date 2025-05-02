@@ -49,12 +49,16 @@ jobs:
           then
               CREATE_RELEASE="true"
               BUILD_VERSION=${GITHUB_REF#refs/tags/}
-              RELEASE_BODY=$(./latest-changelog.sh $BUILD_VERSION)
+              if [[ -x ./latest-changelog.sh ]]
+              then
+                  RELEASE_BODY=$(./latest-changelog.sh $BUILD_VERSION |sed '1s/[，,]$//;1s/^\(.*\)$/### \1\n/')
+                  TG_CHANGELOG=$(./latest-changelog.sh $BUILD_VERSION |sed -n '{;=;p}' | sed "N;s/\n/. /g")
+              fi
               if [[ -z "$RELEASE_BODY" ]]
               then
                   RELEASE_BODY='### ${{ github.event.head_commit.message }}'
+                  TG_CHANGELOG="$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")"
               fi
-              TG_CHANGELOG="$RELEASE_BODY"
           elif [[ ${GITHUB_REF} == refs/pull* ]]
           then
               CREATE_RELEASE="false"
@@ -63,24 +67,16 @@ jobs:
               BUILD_VERSION=pr-${num}-"$(date +'%Y%m%d%H%M%S')"
           elif [[ ${GITHUB_EVENT_NAME} == workflow_dispatch ]]
           then
-              CREATE_RELEASE="true"
-              echo PRE_RELEASE="true" >> .custom_env
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-              RELEASE_BODY="workflow_dispatch"
-              TG_CHANGELOG=$RELEASE_BODY
-              VERSION_PREFIX='debug-'
-          elif ${{ github.event.commits == null }}
-          then
               CREATE_RELEASE="false"
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
-          elif [[ ${GITHUB_REF} == refs/heads/dev ]]
+          elif [[ ${GITHUB_REF} == refs/heads* ]]
           then
               CREATE_RELEASE="true"
-              echo PRE_RELEASE="true" >> .custom_env
-              BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
+              PRE_RELEASE="true"
+              BUILD_VERSION="${GITHUB_REF#refs/heads/}-$(date +'%Y%m%d%H%M%S')"
               RELEASE_BODY=$(echo '${{ toJson(github.event.commits) }}' |jq -r 'map("### "+.message)|join("\n\n------\n")')
-              TG_CHANGELOG=$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")
-              VERSION_PREFIX='debug-'
+              TG_CHANGELOG="$(echo "$RELEASE_BODY"|sed -n "s/### \(.*\)/\1/p" |sed -n '{;=;p}' | sed "N;s/\n/. /g")"
+              VERSION_PREFIX='beta-'
           else
               CREATE_RELEASE="false"
               BUILD_VERSION="$(date +'%Y%m%d%H%M%S')"
@@ -90,19 +86,28 @@ jobs:
           echo BUILD_VERSION="$BUILD_VERSION" >> .custom_env
           echo BUILD_NAME_WITH_VERSION="$BUILD_NAME_WITH_VERSION" >> .custom_env
           echo CREATE_RELEASE="$CREATE_RELEASE" >> .custom_env
+          echo PRE_RELEASE="$PRE_RELEASE" >> .custom_env
           if test -n "$RELEASE_BODY"
           then
               echo 'RELEASE_BODY<<EOF' >> .custom_env
               echo "$RELEASE_BODY" >> .custom_env
               echo 'EOF' >> .custom_env
-              echo 'UPDATE_BODY<<EOF' >> .custom_env
-              envsubst < template-update.md >> .custom_env
-              echo >> .custom_env
-              echo 'EOF' >> .custom_env
+              if [ -f template-update.md ]
+              then
+                  echo 'UPDATE_BODY<<EOF' >> .custom_env
+                  envsubst < template-update.md >> .custom_env
+                  echo >> .custom_env
+                  echo 'EOF' >> .custom_env
+              fi
           fi
+          echo DEPLOY_WEB="true" >> .custom_env
           if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.TELEGRAM_TO }}" && -n "${{ secrets.TELEGRAM_TOKEN }}" ]]
           then
               echo SEND_TELEGRAM="true" >> .custom_env
+          fi
+          if [[ "$CREATE_RELEASE" == "true" && -n "${{ secrets.FDROID_REPO_TOKEN }}" ]]
+          then
+              echo PUSH_FDROID="true" >> .custom_env
           fi
           cat .custom_env
           cat .custom_env >> $GITHUB_ENV
