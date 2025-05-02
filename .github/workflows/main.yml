@@ -32,6 +32,8 @@ jobs:
   build:
     name: make result.zip
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       FORCE: false
     steps:
