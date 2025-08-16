@@ -12,5 +12,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: init action
+      run: |
+        bash < <(curl 'https://gist.githubusercontent.com/AoEiuV020/46f0746e06ea6a302fecb4d76bfb1243/raw/actioninit.bashrc')
     - name: Setup Debug Session
-      uses: csexton/debugger-action@master
+      env:   
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      uses: mxschmitt/action-tmate@v3
+      
